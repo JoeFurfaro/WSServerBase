@@ -7,9 +7,9 @@ import logging
 import asyncio
 import websockets
 
-from rdk3 import config
-from rdk3 import plugins
-from rdk3.events import Events
+from wssb import config
+from wssb import plugins
+from wssb.events import Events
 
 async def run_server(socket, path):
     """
@@ -63,9 +63,9 @@ def start(quiet):
     port = int(config.global_config()["GENERAL"]["server_port"])
 
     # Start the server
-    logging.info("[SERVER] Starting RDK3 WebSocket server on " + address + ":" + str(port))
+    logging.info("[SERVER] Starting WebSocket server on " + address + ":" + str(port))
     if not quiet:
-        print("[SERVER] Starting RDK3 WebSocket server on " + address + ":" + str(port))
+        print("[SERVER] Starting WebSocket server on " + address + ":" + str(port))
 
     server = websockets.serve(run_server, address, port)
 

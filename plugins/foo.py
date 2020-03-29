@@ -1,8 +1,8 @@
-from rdk3 import plugins
-from rdk3.events import Events
-from rdk3.events import EventHandler
+from wssb import plugins
+from wssb.events import Events
+from wssb.events import EventHandler
 
-class FooPlugin(plugins.RDK3Plugin):
+class FooPlugin(plugins.WSSBPlugin):
     """
     Defines a test plugin used as an example of the plugin creation format
     """

@@ -42,6 +42,42 @@ class Config():
         """
         return self.config != None
 
+    def remove_section(self, section):
+        """
+        Removes a config section
+        """
+        self.config.remove_section(section)
+
+    def set_section(self, section, value):
+        """
+        Sets the value of a config section
+        """
+        self.config[section] = value
+
+    def set(self, section, option, value):
+        """
+        Sets the value of a config option
+        """
+        self.config[section][option] = value
+
+    def has_section(self, section):
+        """
+        Returns True if section exists in config
+        """
+        return self.config.has_section(section)
+
+    def has_option(self, section, option):
+        """
+        Returns True if option exists in config
+        """
+        return self.config.has_option(section, option)
+
+    def sections(self):
+        """
+        Returns a list of config sections
+        """
+        return self.config.sections()
+
     def reset(self):
         """
         Resets the config file by deleting it and autogenerating a clean version using the autogen function
@@ -58,6 +94,15 @@ class Config():
         if key in self.config:
             return self.config[key]
         return None
+
+    def save(self):
+        """
+        Writes the configuration data to file
+        """
+        with open(self.path, "w") as config_file:
+            self.config.write(config_file)
+            return True
+        return False
 
     def autogen(self):
         """
@@ -87,10 +132,11 @@ class Config():
 # Stores the global config in memory
 global_conf = None
 groups_conf = None
+users_conf = None
 
 def load_global_config():
     """
-    Loads and returns the global server configuration object
+    Loads the global server configuration object
     """
     global global_conf
     env_root = str(pathlib.Path(__file__).parent.parent.absolute())
@@ -106,13 +152,23 @@ def load_global_config():
 
 def load_groups_config():
     """
-    Loads and returns the global server groups configuration object
+    Loads the global server groups configuration object
     """
     global groups_conf
     env_root = str(pathlib.Path(__file__).parent.parent.absolute())
-    global_conf = Config(env_root + "/groups.ini")
-    global_conf.autogen()
-    return global_conf.load()
+    groups_conf = Config(env_root + "/groups.ini")
+    groups_conf.autogen()
+    return groups_conf.load()
+
+def load_users_config():
+    """
+    Loads the global server users configuration object
+    """
+    global users_conf
+    env_root = str(pathlib.Path(__file__).parent.parent.absolute())
+    users_conf = Config(env_root + "/users.ini")
+    users_conf.autogen()
+    return users_conf.load()
 
 def global_config():
     """
@@ -120,3 +176,43 @@ def global_config():
     """
     global global_conf
     return global_conf
+
+def groups_config():
+    """
+    Loads the global groups configuration
+    """
+    global groups_conf
+    return groups_conf
+
+def users_config():
+    """
+    Loads the global users configuration
+    """
+    global users_conf
+    return users_conf
+
+def parse_safe_csv(s):
+    """
+    Parses a list of comma separated values that does not contain additional commas
+    """
+    return s.split(",")
+
+def list_to_csv(l):
+    """
+    Joins a list of strings by commas
+    """
+    return ",".join(l)
+
+def validate(s):
+    """
+    Validates a user string for config insertion
+    """
+    return not ("," in s or "\"" in s or "\'" in s or "\n" in s)
+
+def append_csv(l, s):
+    """
+    Appends a single string to a comma separated string
+    """
+    if l == "":
+        return s
+    return l + "," + s

@@ -1,0 +1,38 @@
+2020-03-29 14:51:45,571 INFO: [SERVER] Server configuration file reset successfully
+2020-03-29 15:12:20,898 INFO: [SERVER] Group 'bob' added successfully
+2020-03-29 15:12:30,450 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:12:41,743 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:13:04,860 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:15:03,248 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:15:04,730 ERROR: [SERVER] Group 'Bob' already exists
+2020-03-29 15:15:06,008 ERROR: [SERVER] Group 'Bob' already exists
+2020-03-29 15:15:06,913 ERROR: [SERVER] Group 'Bob' already exists
+2020-03-29 15:20:23,856 ERROR: [SERVER] Group 'g' does not exist
+2020-03-29 15:20:27,606 INFO: [SERVER] Group 'Bob' removed successfully
+2020-03-29 15:20:37,537 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:21:07,968 ERROR: [SERVER] Group 'Bob' already exists
+2020-03-29 15:21:13,524 INFO: [SERVER] Group 'Bob' removed successfully
+2020-03-29 15:21:14,331 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:22:39,864 INFO: [SERVER] Group 'Bob' removed successfully
+2020-03-29 15:22:40,946 INFO: [SERVER] Group 'Bob' added successfully
+2020-03-29 15:30:02,774 INFO: [SERVER] Group 'dev' added successfully
+2020-03-29 15:30:06,768 INFO: [SERVER] Group 'dev' removed successfully
+2020-03-29 15:33:23,532 INFO: [SERVER] Group 'bob' added successfully
+2020-03-29 15:33:49,357 INFO: [SERVER] Group 'bob' removed successfully
+2020-03-29 15:33:55,486 INFO: [SERVER] Group 'Bob' removed successfully
+2020-03-29 16:36:53,887 INFO: [SERVER] User 'joe' added successfully
+2020-03-29 16:37:28,412 INFO: [SERVER] User 'joe' added successfully
+2020-03-29 16:37:48,608 INFO: [SERVER] Group 'dev' added successfully
+2020-03-29 16:38:20,544 INFO: [SERVER] User 'joe' added successfully
+2020-03-29 16:38:22,162 INFO: [SERVER] Group 'dev' added successfully
+2020-03-29 16:40:49,368 INFO: [SERVER] User 'joe' removed successfully
+2020-03-29 16:40:51,169 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:52,042 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:52,483 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:52,769 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:53,019 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:53,237 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:53,457 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:53,663 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:40:53,840 ERROR: [SERVER] User 'joe' does not exist
+2020-03-29 16:41:05,336 INFO: [SERVER] Group 'dev' removed successfully

@@ -9,22 +9,22 @@ import os
 import importlib.util
 import inspect
 
-from rdk3 import events
+from wssb import events
 
-class RDK3Plugin():
+class WSSBPlugin():
     """
-    Defines an abstract plugin that can be extended to create custom RDK3Server plugins
+    Defines an abstract plugin that can be extended to create custom WSSBPlugins
     """
     def __init__(self, name, version_str, quiet):
         """
-        Constructor for RDK3Plugin
+        Constructor for WSSBPlugin
         """
         self.name, self.version_str, self.quiet = name, version_str, quiet
         self.handlers = []
 
     def __str__(self):
         """
-        String conversion for RDK3Plugin
+        String conversion for WSSBPlugin
         """
         return self.name + " version " + self.version_str
 
@@ -103,12 +103,12 @@ def load_all(quiet):
     for file_name in os.listdir(plugins_folder):
         if file_name.endswith(".py"):
             plugin_path = plugins_folder + file_name
-            spec = importlib.util.spec_from_file_location("rdk3.plugins", plugin_path)
+            spec = importlib.util.spec_from_file_location("wssb.plugins", plugin_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             plugin_class = None
             for name, cls in inspect.getmembers(module):
-                if inspect.isclass(cls) and issubclass(cls, RDK3Plugin):
+                if inspect.isclass(cls) and issubclass(cls, WSSBPlugin):
                     plugins.append(cls(quiet))
 
 def autogen_folder(quiet):
