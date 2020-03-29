@@ -33,3 +33,5 @@ class FooPlugin(plugins.WSSBPlugin):
         Example event handler for handling server startup
         """
         self.info("Plugin started successfully!")
+
+        return True # <--- This will allow the server to start

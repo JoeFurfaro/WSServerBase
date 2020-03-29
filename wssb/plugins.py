@@ -82,10 +82,15 @@ def trigger_handlers(type):
     Triggers all plugin event handlers that match the type given
     """
     global plugins
+
+    results = []
+
     for plugin in plugins:
         for handler in plugin.handlers:
             if handler.type == type:
-                handler.action()
+                results.append(handler.action())
+
+    return all(results)
 
 def get():
     """

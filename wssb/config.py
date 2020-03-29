@@ -205,9 +205,15 @@ def list_to_csv(l):
 
 def validate(s):
     """
-    Validates a user string for config insertion
+    Validates a string for config insertion
     """
-    return not ("," in s or "\"" in s or "\'" in s or "\n" in s)
+    return not ("," in s or "\"" in s or "\'" in s or "\n" in s or " " in s)
+
+def validate_permission_string(s):
+    """
+    Validates a permission string for config insertion
+    """
+    return not ("\"" in s or "\'" in s or "\n" in s or " " in s)
 
 def append_csv(l, s):
     """

@@ -56,7 +56,8 @@ def start(quiet):
     plugins.load_all(quiet)
 
     # Trigger server start event handlers
-    plugins.trigger_handlers(Events.SERVER_START)
+    if not plugins.trigger_handlers(Events.SERVER_START):
+        return
 
     # Load server information from config
     address = config.global_config()["GENERAL"]["server_address"]

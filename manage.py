@@ -67,8 +67,9 @@ elif args.action == "groups":
 
     elif args.add:
         group_name = args.group[0].strip()
-        if not config.validate(group_name) and not args.quiet:
-            print("[SERVER] You cannot use any of \" , \' \\n in the group name")
+        if not config.validate(group_name):
+            if not args.quiet:
+                print("[SERVER] Group name contains illegal characters")
             sys.exit()
 
         if args.user != None:
@@ -86,8 +87,22 @@ elif args.action == "groups":
                 if not args.quiet:
                     print("[SERVER] User '" + args.user[0] + "' is already in group '" + group_name + "'")
         elif args.perms != None:
-            # Add permissions to group
-            pass
+            perms = args.perms[0]
+            if not config.validate_permission_string(perms):
+                if not args.quiet:
+                    print("[SERVER] Permissions string contains illegal characters")
+                sys.exit()
+            result = users.add_group_permissions(group_name, perms)
+            if result == True:
+                 if not args.quiet:
+                     print("[SERVER] Permission string '" + perms + "' added to group '" + group_name + "' successfully")
+            elif result == -1:
+                if not args.quiet:
+                    print("[SERVER] Group '" + group_name + "' does not exist")
+            elif result == -2:
+                if not args.quiet:
+                    print("[SERVER] Group '" + args.group[0] + "' already contains an element of '" + perms + "'")
+
         else:
             # Add group
             if users.add_group(group_name):
@@ -101,11 +116,35 @@ elif args.action == "groups":
         group_name = args.group[0]
 
         if args.user != None:
-            # Remove user from group
-            pass
+            result = users.remove_user_from_group(args.user[0], group_name)
+            if result == True:
+                if not args.quiet:
+                    print("[SERVER] User '" + args.user[0] + "' removed from group '" + group_name + "' successfully")
+            elif result == -1:
+                if not args.quiet:
+                    print("[SERVER] User '" + args.user[0] + "' does not exist")
+            elif result == -2:
+                if not args.quiet:
+                    print("[SERVER] Group '" + group_name + "' does not exist")
+            elif result == -3:
+                if not args.quiet:
+                    print("[SERVER] User '" + args.user[0] + "' not in group '" + group_name + "'")
         elif args.perms != None:
-            # Remove permissions from group
-            pass
+            perms = args.perms[0]
+            if not config.validate_permission_string(perms):
+                if not args.quiet:
+                    print("[SERVER] Permissions string contains illegal characters")
+                sys.exit()
+            result = users.remove_group_permissions(group_name, perms)
+            if result == True:
+                 if not args.quiet:
+                     print("[SERVER] Permission string '" + perms + "' removed from group '" + group_name + "' successfully")
+            elif result == -1:
+                if not args.quiet:
+                    print("[SERVER] Group '" + group_name + "' does not exist")
+            elif result == -2:
+                if not args.quiet:
+                    print("[SERVER] Group '" + args.group[0] + "' does not contain all elements of '" + perms + "'")
         else:
             # Remove group
             if users.remove_group(group_name):
@@ -140,13 +179,27 @@ elif args.action == "users":
     elif args.add:
 
         user_name = args.user[0].strip()
-        if not config.validate(user_name) and not args.quiet:
-            print("[SERVER] You cannot use any of \" , \' \\n in the user name")
+        if not config.validate(user_name):
+            if not args.quiet:
+                print("[SERVER] User name contains illegal characters")
             sys.exit()
 
         if args.perms != None:
-            # Add permission to user
-            pass
+            perms = args.perms[0]
+            if not config.validate_permission_string(perms):
+                if not args.quiet:
+                    print("[SERVER] Permissions string contains illegal characters")
+                sys.exit()
+            result = users.add_user_permissions(user_name, perms)
+            if result == True:
+                 if not args.quiet:
+                     print("[SERVER] Permission string '" + perms + "' added to user '" + user_name + "' successfully")
+            elif result == -1:
+                if not args.quiet:
+                    print("[SERVER] User '" + user_name + "' does not exist")
+            elif result == -2:
+                if not args.quiet:
+                    print("[SERVER] User '" + args.user[0] + "' already contains an element of '" + perms + "'")
         else:
             # Add new user
             if users.add_user(user_name):
@@ -161,8 +214,21 @@ elif args.action == "users":
         user_name = args.user[0]
 
         if args.perms != None:
-            # Add permission to user
-            pass
+            perms = args.perms[0]
+            if not config.validate_permission_string(perms):
+                if not args.quiet:
+                    print("[SERVER] Permissions string contains illegal characters")
+                sys.exit()
+            result = users.remove_user_permissions(user_name, perms)
+            if result == True:
+                 if not args.quiet:
+                     print("[SERVER] Permission string '" + perms + "' removed from user '" + user_name + "' successfully")
+            elif result == -1:
+                if not args.quiet:
+                    print("[SERVER] User '" + user_name + "' does not exist")
+            elif result == -2:
+                if not args.quiet:
+                    print("[SERVER] User '" + args.user[0] + "' does not contain all elements of '" + perms + "'")
         else:
             # Add new user
             if users.remove_user(user_name):
