@@ -44,18 +44,18 @@ def start(quiet):
 
     # Load server config
     if config.load_global_config():
-        logging.info("Loaded server configuration file successfully")
+        logging.info("[SERVER] Loaded server configuration file successfully")
         if not quiet:
-            print("Loaded server configuration file successfully")
+            print("[SERVER] Loaded server configuration file successfully")
     else:
         if not quiet:
-            print("Could not load server configuration file")
-        logging.error("Could not load server configuration file")
+            print("[SERVER] Could not load server configuration file")
+        logging.error("[SERVER] Could not load server configuration file")
 
     # Load all plugins
     plugins.load_all(quiet)
 
-    # Trigger server start events
+    # Trigger server start event handlers
     plugins.trigger_handlers(Events.SERVER_START)
 
     # Load server information from config
@@ -63,9 +63,9 @@ def start(quiet):
     port = int(config.global_config()["GENERAL"]["server_port"])
 
     # Start the server
-    logging.info("Starting RDK3 WebSocket server on " + address + ":" + str(port))
+    logging.info("[SERVER] Starting RDK3 WebSocket server on " + address + ":" + str(port))
     if not quiet:
-        print("Starting RDK3 WebSocket server on " + address + ":" + str(port))
+        print("[SERVER] Starting RDK3 WebSocket server on " + address + ":" + str(port))
 
     server = websockets.serve(run_server, address, port)
 

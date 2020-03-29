@@ -86,6 +86,7 @@ class Config():
 
 # Stores the global config in memory
 global_conf = None
+groups_conf = None
 
 def load_global_config():
     """
@@ -99,7 +100,17 @@ def load_global_config():
             "server_port": "8765" ,
         },
     }
-    global_conf = Config(env_root + "/rdk3.ini", required=fields)
+    global_conf = Config(env_root + "/server.ini", required=fields)
+    global_conf.autogen()
+    return global_conf.load()
+
+def load_groups_config():
+    """
+    Loads and returns the global server groups configuration object
+    """
+    global groups_conf
+    env_root = str(pathlib.Path(__file__).parent.parent.absolute())
+    global_conf = Config(env_root + "/groups.ini")
     global_conf.autogen()
     return global_conf.load()
 

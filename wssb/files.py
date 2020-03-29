@@ -14,8 +14,8 @@ def reset_log_file(quiet):
     env_root = str(pathlib.Path(__file__).parent.parent.absolute())
     if os.path.exists(env_root + "/server.log"):
         os.remove(env_root + "/server.log")
-        logging.info("Log file reset successfully")
+        logging.info("[SERVER] Log file reset successfully")
         if not quiet:
-            print("Log file reset successfully")
+            print("[SERVER] Log file reset successfully")
         return True
     return False

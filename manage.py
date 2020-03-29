@@ -35,10 +35,10 @@ elif args.action == "resetlog":
 elif args.action == "resetcfg":
     config.load_global_config()
     if config.global_config().reset():
-        logging.info("Server configuration file reset successfully")
+        logging.info("[SERVER] Server configuration file reset successfully")
         if not args.quiet:
-            print("Server configuration file reset successfully")
+            print("[SERVER] Server configuration file reset successfully")
     else:
         if not args.quiet:
-            print("Failed to reset server configuration file")
-        logging.error("Failed to reset server configuration file")
+            print("[SERVER] Failed to reset server configuration file")
+        logging.error("[SERVER] Failed to reset server configuration file")
