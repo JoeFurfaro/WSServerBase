@@ -9,6 +9,9 @@ import os
 import importlib.util
 import inspect
 
+import pathlib
+import os
+
 from wssb import events
 
 class WSSBPlugin():
@@ -18,9 +21,16 @@ class WSSBPlugin():
     def __init__(self, name, version_str, quiet):
         """
         Constructor for WSSBPlugin
+        Autogenerates plugin data folder
         """
-        self.name, self.version_str, self.quiet = name, version_str, quiet
+        self.name, self.version_str, self.quiet = name.lower(), version_str, quiet
         self.handlers = []
+
+        env_root = str(pathlib.Path(__file__).parent.parent.absolute())
+        if not os.path.exists(env_root + "/plugins/" + name.lower()):
+            os.mkdir(env_root + "/plugins/" + name.lower())
+
+        self.path = env_root + "/plugins/" + name.lower() + "/"
 
     def __str__(self):
         """
@@ -77,7 +87,7 @@ class WSSBPlugin():
 
 plugins = []
 
-def trigger_handlers(type):
+def trigger_handlers(type, context):
     """
     Triggers all plugin event handlers that match the type given
     """
@@ -88,7 +98,7 @@ def trigger_handlers(type):
     for plugin in plugins:
         for handler in plugin.handlers:
             if handler.type == type:
-                results.append(handler.action())
+                results.append(handler.action(context))
 
     return all(results)
 

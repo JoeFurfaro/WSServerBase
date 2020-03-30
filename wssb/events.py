@@ -13,6 +13,8 @@ class Events(Enum):
     SERVER_START = auto()
     SERVER_STOP = auto()
 
+    USER_AUTH_ATTEMPT = auto()
+
 class EventHandler():
     """
     Defines an event handler that can be registered to the server event list
