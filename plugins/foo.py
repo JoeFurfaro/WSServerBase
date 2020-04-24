@@ -2,9 +2,12 @@
 This file outlines an example WSSB plugin implementation
 """
 
+import asyncio
+
 from wssb import plugins
 from wssb.events import Events
 from wssb.events import EventHandler
+from wssb import views
 from wssb import config
 
 class FooPlugin(plugins.WSSBPlugin):
@@ -30,6 +33,7 @@ class FooPlugin(plugins.WSSBPlugin):
         """
         event_handlers = [
             EventHandler(Events.SERVER_START, self.on_start),
+            EventHandler(Events.USER_AUTHENTICATED, self.on_auth)
         ]
         self.register_handlers(event_handlers)
 
@@ -52,6 +56,31 @@ class FooPlugin(plugins.WSSBPlugin):
         }
 
         self.config = config.Config(self.path + "foo.ini", default_config) # <--- Create the configuration object
-        self.config.autogen() # <---- Autogenerate and load the configuration file
+        self.config.autogen() # <--- Autogenerate and load the configuration file
+
+        self.add_route("foo", self.view_foo)
 
         return True # <--- This will allow the server to start
+
+    def on_auth(self, context):
+        """
+        Example event handler for sending a welcome on authentication
+        """
+        user = context["user"]
+        return views.info("FOO_WELCOME", "Hello " + user.name + "! FOO welcomes YOU!")
+
+    def view_foo(self, context):
+        """
+        Example event handler for processing custom requests
+        """
+        request = context["request"] # <--- Gets packet dictionary object
+
+        if request["code"] == "foo": # <--- Name of custom command
+            # Set up a custom response packet
+            response = {
+                "type": "response", # <--- Should always use "response" type when responding to client
+                "status": "success", # <--- Can be "success", "info", "warning", "error"
+                "custom_component": "my custom value", # <--- You can add unlimited custom keys to response
+            }
+
+        return response # <--- Format and send the response packet to the user

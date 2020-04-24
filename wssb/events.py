@@ -10,10 +10,15 @@ class Events(Enum):
     Defines an enum listing all types of valid events on the server
     These event types can be used within plugins and within core
     """
+    ### CONDITIONAL HANDLERS ###
     SERVER_START = auto()
     SERVER_STOP = auto()
 
     USER_AUTH_ATTEMPT = auto()
+    USER_DISCONNECT = auto()
+
+    ### RESPONSE-BASED HANDLERS ###
+    USER_AUTHENTICATED = auto()
 
 class EventHandler():
     """
@@ -31,12 +36,6 @@ class EventHandler():
         String conversion for Event
         """
         return "Event of type " + self.type.name
-
-    def is_a(type):
-        """
-        Return True if event type matches the type given
-        """
-        return self.type == type
 
     def __getitem__(self, key):
         """

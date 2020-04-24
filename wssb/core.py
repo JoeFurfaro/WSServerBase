@@ -11,30 +11,10 @@ import json
 from wssb import config
 from wssb import plugins
 from wssb import users
-from wssb import cmds
+from wssb import views
 from wssb.events import Events
 
 quiet_mode = False
-
-def format_packet(x):
-    """
-    Formats a dictionary or list of dictionaries into a packet string in JSON format to be sent
-    """
-    if type(x) in (list, dict):
-        return json.dumps(x)
-    return None
-
-def parse_packet(x):
-    """
-    Parses a JSON packet string into a dictionary object or list of dictionary objects
-    TODO: Should validate contents and integrity in the future
-    """
-    if type(x) == str:
-        parsed = json.loads(x)
-        if type(parsed) == dict:
-            return [parsed]
-        return parsed
-    return None
 
 async def run_server(socket, path):
     """
@@ -42,17 +22,44 @@ async def run_server(socket, path):
     """
     global quiet_mode
 
-    while True:
-        data = await socket.recv()
-        packets = parse_packet(data)
-        for packet in packets:
-            if packet["type"] == "cmd":
-                response = cmds.process(packet, socket, quiet_mode)
-                if response == None:
-                    # Try running plugin commands
-                    pass
-                else:
-                    await socket.send(format_packet(response))
+    authenticated = False
+    session_user = None
+
+    try:
+        while True:
+            data = await socket.recv()
+            packets = views.parse_packet(data)
+            for request in packets:
+                if request["type"] != None and request["type"] == "request":
+                    if not authenticated and request["code"] != None and request["code"] != "auth":
+                        await socket.send(views.format_packet(views.error("WSSB_USER_NOT_AUTHENTICATED", "You have not yet been authenticated!")))
+                        break
+                    response = views.process(request, socket, quiet_mode)
+                    if response == None:
+                        # Trigger plugin event handler for custom commands
+                        responses = plugins.handle(request, session_user)
+                        for response in responses:
+                            await socket.send(views.format_packet(response))
+                        if len(responses) == 0:
+                            await socket.send(views.format_packet(views.error("WSSB_REQUEST_CODE_NOT_FOUND", "The request code given could not be found in any core or plugin features.")))
+                    elif type(response) == dict:
+                        # Authenticate user
+                        authenticated = True
+                        session_user = response["user"]
+                        await socket.send(views.format_packet(views.success("WSSB_USER_AUTHENTICATED", "You are now logged in!")))
+                        for plugin_response in response["plugin_responses"]:
+                            await socket.send(views.format_packet(plugin_response))
+                    else:
+                        await socket.send(views.format_packet(response))
+    except Exception as e:
+        print(e)
+    finally:
+        if session_user != None:
+            if plugins.trigger_conditional_handlers(Events.USER_DISCONNECT, { "user": session_user }):
+                users.connected.remove(session_user)
+                logging.info("[SERVER] User '" + session_user.name + "' has disconnected.")
+                if not quiet_mode:
+                    print("[SERVER] User '" + session_user.name + "' has disconnected.")
 
 def start(quiet):
     """
@@ -83,7 +90,7 @@ def start(quiet):
     users.reload_all()
 
     # Trigger server start event handlers
-    if not plugins.trigger_handlers(Events.SERVER_START, None):
+    if not plugins.trigger_conditional_handlers(Events.SERVER_START, None):
         return
 
     # Load server information from config

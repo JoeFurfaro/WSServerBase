@@ -8,7 +8,7 @@ from wssb import config
 registered_users = [] # Stores all users registered in users.ini
 registered_groups = [] # Stores all groups registered in groups.ini
 
-connected = set() # Stores all currently connected users
+connected = [] # Stores all currently connected users
 
 class Group():
     """
