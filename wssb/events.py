@@ -12,8 +12,7 @@ class Events(Enum):
     """
     ### CONDITIONAL HANDLERS ###
     SERVER_START = auto()
-    SERVER_STOP = auto()
-
+    
     USER_AUTH_ATTEMPT = auto()
     USER_DISCONNECT = auto()
 

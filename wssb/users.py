@@ -8,8 +8,6 @@ from wssb import config
 registered_users = [] # Stores all users registered in users.ini
 registered_groups = [] # Stores all groups registered in groups.ini
 
-connected = [] # Stores all currently connected users
-
 class Group():
     """
     Defines a group object who has permissions and users
@@ -35,6 +33,7 @@ class User():
         Constructor for User
         """
         self.name, self.address, self.groups, self.permissions = name, address, groups, permissions
+        self._sockets = []
 
     def has_permission(self, p):
         """
@@ -49,8 +48,10 @@ class User():
 
     def belongs_to(self, g):
         """
-        Returns True if user belongs to the given group
+        Returns True if user belongs to the group
         """
+        if type(g) == str:
+            return any([group.name == g for group in self.groups])
         return g in self.groups
 
 def reload_all():
@@ -76,6 +77,17 @@ def reload_all():
     else:
         return False
 
+def connected():
+    """
+    Gets a list of all connected users
+    """
+    global registered_users
+    conn = []
+    for user in registered_users:
+        if len(user._sockets) > 0:
+            conn.append(user)
+    return conn
+
 def find_user(user_name):
     """
     Finds a registered user by name
@@ -85,6 +97,17 @@ def find_user(user_name):
     for user in registered_users:
         if user.name == user_name:
             return user
+    return None
+
+def find_group(group_name):
+    """
+    Finds a registered group by name
+    Returns None if the group does not exist
+    """
+    global registered_groups
+    for group in registered_groups:
+        if group.name == group_name:
+            return group
     return None
 
 def perm_is_child(parent, child):

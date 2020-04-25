@@ -10,6 +10,52 @@ from wssb.events import Events
 from wssb import plugins
 from wssb import users
 
+class Target():
+    """
+    This class defines a response routing target
+    """
+    def __init__(self, users=[], groups=[]):
+        """
+        Initializes a response router target object
+        """
+        self.mode = "ADDRESS"
+        self.users, self.groups = users, groups
+
+    def all():
+        """
+        Generates a target object to all connected users
+        """
+        all_target = Target()
+        all_target.mode = "ALL"
+        return all_target
+
+    def source():
+        """
+        Generates a target object to the request source user
+        """
+        source_target = Target()
+        source_target.mode = "SOURCE"
+        return source_target
+
+    def user(user):
+        """
+        Generates a target object that targets a certain user
+        """
+        if type(user) == str:
+            user_obj = users.find_user(user)
+            return Target(users=[user_obj]) if user_obj != None else None
+        return Target(users=[user])
+
+    def group(group):
+        """
+        Generates a target object that targets a certain group
+        """
+        if type(group) == str:
+            group_obj = users.find_group(group)
+            return Target(groups=[group_obj]) if group_obj != None else None
+        return Target(groups=[group_obj])
+
+
 def format_packet(x):
     """
     Formats a dictionary or list of dictionaries into a packet string in JSON format to be sent
@@ -53,7 +99,6 @@ def process(request, socket, quiet):
     Process a core request from client
     Return None if no request matches are found
     """
-
     if request["code"] == "auth":
         return view_auth(request, socket, quiet)
 
@@ -67,12 +112,11 @@ def view_auth(request, socket, quiet):
         user = users.find_user(request["user_name"])
         if user != None:
             if plugins.trigger_conditional_handlers(Events.USER_AUTH_ATTEMPT, { "request": request, "user": user }):
-                users.connected.append(user)
                 plugin_responses = plugins.trigger_handlers(Events.USER_AUTHENTICATED, { "user": user })
                 logging.info("[SERVER] User '" + request["user_name"] + "' has been added to the list of connected users.")
                 if not quiet:
                     print("[SERVER] User '" + request["user_name"] + "' has been added to the list of connected users.")
-                return { "user": user, "plugin_responses": plugin_responses }
+                return { "wssb_authenticated": True, "user": user, "plugin_responses": plugin_responses }
             else:
                 return None
         else:

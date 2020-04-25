@@ -1,13 +1,11 @@
 """
 This file outlines an example WSSB plugin implementation
 """
-
-import asyncio
-
 from wssb import plugins
 from wssb.events import Events
 from wssb.events import EventHandler
 from wssb import views
+from wssb.views import Target
 from wssb import config
 
 class FooPlugin(plugins.WSSBPlugin):
@@ -67,20 +65,23 @@ class FooPlugin(plugins.WSSBPlugin):
         Example event handler for sending a welcome on authentication
         """
         user = context["user"]
-        return views.info("FOO_WELCOME", "Hello " + user.name + "! FOO welcomes YOU!")
+        response = views.info("FOO_WELCOME", "Hello " + user.name + "! FOO welcomes YOU!")
+        return self.resp(response, Target.all())
 
     def view_foo(self, context):
         """
         Example event handler for processing custom requests
         """
         request = context["request"] # <--- Gets packet dictionary object
+        user = context["user"] # <--- Gets the user that sent the request
 
-        if request["code"] == "foo": # <--- Name of custom command
+        if request["code"] == "foo": # <--- Custom request code
             # Set up a custom response packet
             response = {
                 "type": "response", # <--- Should always use "response" type when responding to client
                 "status": "success", # <--- Can be "success", "info", "warning", "error"
+                "code": "FOO_EXAMPLE", # <--- Can be any value, should be unique to plugin to help client distinguish response
                 "custom_component": "my custom value", # <--- You can add unlimited custom keys to response
             }
 
-        return response # <--- Format and send the response packet to the user
+        return self.resp(response, Target.all()) # <--- Format and send the response packet to the user

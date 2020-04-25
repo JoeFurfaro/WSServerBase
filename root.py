@@ -17,7 +17,7 @@ async def root():
         await websocket.send(format_packet({ "type": "request", "code": "auth", "user_name": "joe" }))
         print(await websocket.recv())
         print(await websocket.recv())
-        await websocket.send(format_packet({ "type": "request", "code": "foop" }))
+        await websocket.send(format_packet({ "type": "request", "code": "foo" }))
         print(await websocket.recv())
 
         print("done")

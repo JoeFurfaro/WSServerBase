@@ -101,6 +101,9 @@ class WSSBPlugin():
         for handler in handlers:
             self.register_handler(handler)
 
+    def resp(self, response, target):
+        return { "response": response, "target": target }
+
 plugins = []
 
 def trigger_conditional_handlers(type, context):

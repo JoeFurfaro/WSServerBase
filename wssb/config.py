@@ -207,7 +207,7 @@ def validate(s):
     """
     Validates a string for config insertion
     """
-    return not ("," in s or "\"" in s or "\'" in s or "\n" in s or " " in s)
+    return not ("," in s or "\"" in s or "\'" in s or "\n" in s or " " in s or s[0] == "%")
 
 def validate_permission_string(s):
     """

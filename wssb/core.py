@@ -6,7 +6,9 @@ Help for all functionality of this script is available in the documentation
 import logging
 import asyncio
 import websockets
+import signal
 import json
+import traceback
 
 from wssb import config
 from wssb import plugins
@@ -15,6 +17,28 @@ from wssb import views
 from wssb.events import Events
 
 quiet_mode = False
+
+def get_target_conns(response, socket):
+    resp = response["response"]
+    target = response["target"]
+    target_conns = []
+    if target.mode == "ALL":
+        for user in users.connected():
+            target_conns += user._sockets
+    elif target.mode == "SOURCE":
+        target_conns = [socket]
+    else:
+        for target_user in target.users:
+            for online_user in users.connected():
+                if target_user != None and target_user.name == online_user.name:
+                    target_conns += online_user._sockets
+        for target_group in target.groups:
+            for online_user in users.connected:
+                if target_group != None and online_user.belongs_to(target_group):
+                    for conn in online_user._sockets:
+                        if conn not in target_conns:
+                            target_conns.append(conn)
+    return target_conns
 
 async def run_server(socket, path):
     """
@@ -39,27 +63,44 @@ async def run_server(socket, path):
                         # Trigger plugin event handler for custom commands
                         responses = plugins.handle(request, session_user)
                         for response in responses:
-                            await socket.send(views.format_packet(response))
+                            target_conns = get_target_conns(response, socket)
+                            print(len(target_conns))
+                            for conn in target_conns:
+                                await conn.send(views.format_packet(response["response"]))
                         if len(responses) == 0:
                             await socket.send(views.format_packet(views.error("WSSB_REQUEST_CODE_NOT_FOUND", "The request code given could not be found in any core or plugin features.")))
-                    elif type(response) == dict:
+                    elif type(response) == dict and response["wssb_authenticated"] != None:
                         # Authenticate user
                         authenticated = True
                         session_user = response["user"]
+                        session_user._sockets.append(socket)
                         await socket.send(views.format_packet(views.success("WSSB_USER_AUTHENTICATED", "You are now logged in!")))
                         for plugin_response in response["plugin_responses"]:
-                            await socket.send(views.format_packet(plugin_response))
+                            target_conns = get_target_conns(plugin_response, socket)
+                            print(len(target_conns))
+                            for conn in target_conns:
+                                await conn.send(views.format_packet(plugin_response["response"]))
                     else:
-                        await socket.send(views.format_packet(response))
+                        await socket.send(views.format_packet(response["response"]))
     except Exception as e:
-        print(e)
+        # Exceptions to ignore when printing can be added to the conn_excp blacklist
+        conn_excp = (
+            websockets.exceptions.ConnectionClosedOK,
+        )
+        if type(e) not in conn_excp and not quiet_mode:
+            print(traceback.format_exc())
     finally:
         if session_user != None:
-            if plugins.trigger_conditional_handlers(Events.USER_DISCONNECT, { "user": session_user }):
-                users.connected.remove(session_user)
-                logging.info("[SERVER] User '" + session_user.name + "' has disconnected.")
-                if not quiet_mode:
-                    print("[SERVER] User '" + session_user.name + "' has disconnected.")
+            plugins.trigger_handlers(Events.USER_DISCONNECT, { "user": session_user })
+            session_user._sockets.remove(socket)
+            logging.info("[SERVER] User '" + session_user.name + "' has disconnected.")
+            if not quiet_mode:
+                print("[SERVER] User '" + session_user.name + "' has disconnected.")
+
+async def start_core(address, port, stop):
+    async with websockets.serve(run_server, address, port):
+        await stop
+        print("CLOSING")
 
 def start(quiet):
     """
@@ -102,7 +143,8 @@ def start(quiet):
     if not quiet:
         print("[SERVER] Starting WebSocket server on " + address + ":" + str(port))
 
-    server = websockets.serve(run_server, address, port)
+    loop = asyncio.get_event_loop()
+    stop = loop.create_future()
+    loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
-    asyncio.get_event_loop().run_until_complete(server)
-    asyncio.get_event_loop().run_forever()
+    loop.run_until_complete(start_core(address, port, stop))
