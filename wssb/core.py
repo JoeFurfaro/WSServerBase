@@ -22,6 +22,8 @@ def get_target_conns(response, socket):
     resp = response["response"]
     target = response["target"]
     target_conns = []
+    if target == None:
+        return []
     if target.mode == "ALL":
         for user in users.connected():
             target_conns += user._sockets
@@ -33,7 +35,7 @@ def get_target_conns(response, socket):
                 if target_user != None and target_user.name == online_user.name:
                     target_conns += online_user._sockets
         for target_group in target.groups:
-            for online_user in users.connected:
+            for online_user in users.connected():
                 if target_group != None and online_user.belongs_to(target_group):
                     for conn in online_user._sockets:
                         if conn not in target_conns:

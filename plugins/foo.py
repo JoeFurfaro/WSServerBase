@@ -66,7 +66,7 @@ class FooPlugin(plugins.WSSBPlugin):
         """
         user = context["user"]
         response = views.info("FOO_WELCOME", "Hello " + user.name + "! FOO welcomes YOU!")
-        return self.resp(response, Target.all())
+        return self.resp(response, Target.source())
 
     def view_foo(self, context):
         """
@@ -84,4 +84,4 @@ class FooPlugin(plugins.WSSBPlugin):
                 "custom_component": "my custom value", # <--- You can add unlimited custom keys to response
             }
 
-        return self.resp(response, Target.all()) # <--- Format and send the response packet to the user
+        return self.resp(response, Target.source()) # <--- Format and send the response packet to the user
