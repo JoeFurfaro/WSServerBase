@@ -85,3 +85,6 @@
 2020-04-25 19:01:16,278 INFO: [SERVER] Starting WebSocket server on localhost:8765
 2020-04-25 19:01:23,391 INFO: [SERVER] User 'joe' has been added to the list of connected users.
 2020-04-25 19:01:23,395 INFO: [SERVER] User 'joe' has disconnected.
+2020-04-25 19:07:59,451 INFO: [SERVER] Loaded server configuration file successfully
+2020-04-25 19:07:59,453 INFO: [foo] Plugin started successfully!
+2020-04-25 19:07:59,454 INFO: [SERVER] Starting WebSocket server on localhost:8765

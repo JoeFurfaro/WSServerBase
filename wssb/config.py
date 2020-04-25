@@ -143,7 +143,7 @@ def load_global_config():
     fields = {
         "GENERAL": {
             "server_address": "localhost",
-            "server_port": "8765" ,
+            "server_port": "8765",
         },
     }
     global_conf = Config(env_root + "/server.ini", required=fields)
