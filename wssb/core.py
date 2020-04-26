@@ -17,6 +17,7 @@ from wssb import views
 from wssb.events import Events
 
 quiet_mode = False
+stop = None
 
 def get_target_conns(response, socket):
     resp = response["response"]
@@ -46,7 +47,7 @@ async def run_server(socket, path):
     """
     Handles the behaviour of the main Websocket server thread (main function)
     """
-    global quiet_mode
+    global quiet_mode, stop
 
     authenticated = False
     session_user = None
@@ -88,6 +89,13 @@ async def run_server(socket, path):
                                 await sock.send(views.format_packet(views.info("WSSB_USER_KICKED", response["close_reason"])))
                                 await sock.close()
 
+                        if "stop" in response:
+                            if response["stop"]:
+                                logging.info("[SERVER] " + session_user.name + " is closing the server")
+                                if not quiet_mode:
+                                    print("[SERVER] " + session_user.name + " is closing the server")
+                                stop.set_result(0)
+
                         if "target" in response:
                             target_conns = get_target_conns(response, socket)
                             for conn in target_conns:
@@ -113,13 +121,12 @@ async def run_server(socket, path):
 async def start_core(address, port, stop):
     async with websockets.serve(run_server, address, port):
         await stop
-        print("CLOSING")
 
 def start(quiet):
     """
     Starts the main application WebSocket server
     """
-    global quiet_mode
+    global quiet_mode, stop
     quiet_mode = quiet
 
     # Autogenerate the plugins folder
@@ -161,3 +168,7 @@ def start(quiet):
     loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
     loop.run_until_complete(start_core(address, port, stop))
+
+    logging.info("[SERVER] Server closed")
+    if not quiet_mode:
+        print("[SERVER] Server closed")

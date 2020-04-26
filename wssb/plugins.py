@@ -13,6 +13,7 @@ import pathlib
 import os
 
 from wssb import events
+from wssb.events import Events
 
 class WSSBPlugin():
     """
@@ -162,7 +163,10 @@ def reload_all():
     global plugins
 
     plugins = []
+    autogen_folder(True)
     load_all(True)
+
+    trigger_conditional_handlers(Events.SERVER_START, None)
 
 def load_all(quiet):
     """

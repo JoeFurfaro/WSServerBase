@@ -116,6 +116,8 @@ def process(session_user, request, quiet):
         return view_reloadplugins(session_user, request, quiet)
     elif request["code"] == "reload":
         return view_reload(session_user, request, quiet)
+    elif request["code"] == "stop":
+        return view_stop(session_user, request, quiet)
 
     return None
 
@@ -147,6 +149,7 @@ def view_stop(session_user, request, quiet):
     """
     if session_user.has_permission("wssb.stop"):
         return resp(success("WSSB_STOPPING_SERVER", "Shutting down server now..."), Target.source(), stop=True)
+    return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to stop the server!"), Target.source())
 
 def view_reload(session_user, request, quiet):
     """
@@ -159,7 +162,7 @@ def view_reload(session_user, request, quiet):
         logging.info("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
         if not quiet:
             print("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
-        return resp(success("WSSB_CONFIG_RELOADED", "The server has been reloaded successfully!"), Target.source(), to_close=users_resp["to_close"])
+        return resp(success("WSSB_RELOADED", "The server has been reloaded successfully!"), Target.source(), to_close=users_resp["to_close"])
 
     return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server!"), Target.source())
 
@@ -173,7 +176,7 @@ def view_reloadplugins(session_user, request, quiet):
         logging.info("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
         if not quiet:
             print("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
-        return resp(success("WSSB_CONFIG_RELOADED", "Server plugins have been reloaded successfully!"), Target.source())
+        return resp(success("WSSB_PLUGINS_RELOADED", "Server plugins have been reloaded successfully!"), Target.source())
     return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server plugins!"), Target.source())
 
 
