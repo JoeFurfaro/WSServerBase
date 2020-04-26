@@ -77,11 +77,11 @@ def parse_packet(x):
         return parsed
     return None
 
-def resp(response, target, to_close=[], close_reason="You have been kicked from the server!"):
+def resp(response, target, to_close=[], close_reason="You have been kicked from the server!", stop=False):
     """
     Generates a response targetted at the given target
     """
-    return { "response": response, "target": target, "to_close": to_close, "close_reason": close_reason }
+    return { "response": response, "target": target, "to_close": to_close, "close_reason": close_reason, "stop": stop }
 
 def error(error_code, message):
     """
@@ -112,6 +112,8 @@ def process(session_user, request, quiet):
         return view_reloadcfg(session_user, request, quiet)
     elif request["code"] == "reloadusers":
         return view_reloadusers(session_user, request, quiet)
+    elif request["code"] == "reloadplugins":
+        return view_reloadplugins(session_user, request, quiet)
     elif request["code"] == "reload":
         return view_reload(session_user, request, quiet)
 
@@ -139,26 +141,47 @@ def view_auth(session_user, request, quiet):
     else:
         return error("WSSB_AUTH_INVALID_SYNTAX", "Invalid packet syntax.")
 
+def view_stop(session_user, request, quiet):
+    """
+    Stops the server cleanly
+    """
+    if session_user.has_permission("wssb.stop"):
+        return resp(success("WSSB_STOPPING_SERVER", "Shutting down server now..."), Target.source(), stop=True)
+
 def view_reload(session_user, request, quiet):
     """
     Reloads the global server config and the user services module
     """
     if session_user.has_permission("wssb.reload"):
-        view_reloadcfg(session_user, request, quiet)
-        view_reloadusers(session_user, request, quiet)
+        cfg_resp = view_reloadcfg(session_user, request, quiet)
+        users_resp = view_reloadusers(session_user, request, quiet)
+        plugins_resp = view_reloadplugins(session_user, request, quiet)
         logging.info("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
         if not quiet:
             print("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
-        return resp(success("WSSB_CONFIG_RELOADED", "The server has been reloaded successfully!"), Target.source())
+        return resp(success("WSSB_CONFIG_RELOADED", "The server has been reloaded successfully!"), Target.source(), to_close=users_resp["to_close"])
 
     return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server!"), Target.source())
+
+
+def view_reloadplugins(session_user, request, quiet):
+    """
+    Reloads all plugins
+    """
+    if session_user.has_permission("wssb.reload.plugins"):
+        plugins.reload_all()
+        logging.info("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
+        if not quiet:
+            print("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
+        return resp(success("WSSB_CONFIG_RELOADED", "Server plugins have been reloaded successfully!"), Target.source())
+    return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server plugins!"), Target.source())
 
 
 def view_reloadcfg(session_user, request, quiet):
     """
     Reloads the global server config
     """
-    if session_user.has_permission("wssb.reloadcfg"):
+    if session_user.has_permission("wssb.reload.cfg"):
         config.global_config().reload()
         logging.info("[SERVER] The global config has been reloaded by \'" + session_user.name + "\'")
         if not quiet:
@@ -170,7 +193,7 @@ def view_reloadusers(session_user, request, quiet):
     """
     Reloads the user services module (including groups)
     """
-    if session_user.has_permission("wssb.reloadusers"):
+    if session_user.has_permission("wssb.reload.users"):
         users.reload_all()
         sockets_to_close = []
         for socket in users.connected_sockets:

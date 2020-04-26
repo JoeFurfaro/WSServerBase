@@ -155,6 +155,15 @@ def get():
     global plugins
     return plugins
 
+def reload_all():
+    """
+    Reloads all server plugins
+    """
+    global plugins
+
+    plugins = []
+    load_all(True)
+
 def load_all(quiet):
     """
     Attempts to load all RDK3Plugins available in the plugins directory

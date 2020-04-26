@@ -414,3 +414,23 @@ ValueError: list.remove(x): x not in list
 2020-04-25 21:14:54,340 INFO: [SERVER] The global config has been reloaded by 'joe'
 2020-04-25 21:14:54,340 INFO: [SERVER] User services have been reloaded by 'joe'
 2020-04-25 21:14:54,340 INFO: [SERVER] The server has been reloaded by 'joe'
+2020-04-25 22:19:53,736 INFO: [SERVER] Loaded server configuration file successfully
+2020-04-25 22:19:53,737 INFO: [foo] Plugin started successfully!
+2020-04-25 22:19:53,738 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-04-25 22:19:57,225 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-04-25 22:19:57,227 INFO: [SERVER] The global config has been reloaded by 'joe'
+2020-04-25 22:19:57,227 INFO: [SERVER] User services have been reloaded by 'joe'
+2020-04-25 22:19:57,227 INFO: [SERVER] User 'joe' has disconnected.
+2020-04-25 22:20:20,544 INFO: [SERVER] Loaded server configuration file successfully
+2020-04-25 22:20:20,546 INFO: [foo] Plugin started successfully!
+2020-04-25 22:20:20,547 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-04-25 22:20:21,779 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-04-25 22:20:21,780 INFO: [SERVER] The global config has been reloaded by 'joe'
+2020-04-25 22:20:21,780 INFO: [SERVER] User services have been reloaded by 'joe'
+2020-04-25 22:20:21,781 INFO: [SERVER] The server plugins have been reloaded by 'joe'
+2020-04-25 22:20:21,781 INFO: [SERVER] The server has been reloaded by 'joe'
+2020-04-25 22:21:43,776 INFO: [SERVER] Loaded server configuration file successfully
+2020-04-25 22:21:43,778 INFO: [foo] Plugin started successfully!
+2020-04-25 22:21:43,778 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-04-25 22:22:50,393 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-04-25 22:22:50,394 INFO: [SERVER] The server plugins have been reloaded by 'joe'
