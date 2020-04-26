@@ -9,6 +9,7 @@ import json
 from wssb.events import Events
 from wssb import plugins
 from wssb import users
+from wssb import config
 
 class Target():
     """
@@ -76,6 +77,12 @@ def parse_packet(x):
         return parsed
     return None
 
+def resp(response, target, to_close=[], close_reason="You have been kicked from the server!"):
+    """
+    Generates a response targetted at the given target
+    """
+    return { "response": response, "target": target, "to_close": to_close, "close_reason": close_reason }
+
 def error(error_code, message):
     """
     Generates an error response packet
@@ -94,20 +101,28 @@ def info(info_code, message):
     """
     return { "type": "response", "status": "info", "code": info_code, "message": message }
 
-def process(request, socket, quiet):
+def process(session_user, request, quiet):
     """
     Process a core request from client
     Return None if no request matches are found
     """
     if request["code"] == "auth":
-        return view_auth(request, socket, quiet)
+        return view_auth(session_user, request, quiet)
+    elif request["code"] == "reloadcfg":
+        return view_reloadcfg(session_user, request, quiet)
+    elif request["code"] == "reloadusers":
+        return view_reloadusers(session_user, request, quiet)
+    elif request["code"] == "reload":
+        return view_reload(session_user, request, quiet)
 
     return None
 
-def view_auth(request, socket, quiet):
+def view_auth(session_user, request, quiet):
     """
     Identifies and authenticates a user
     """
+    if session_user != None:
+        return error("WSSB_ALREADY_AUTHENTICATED", "You have already been authenticated.")
     if request["user_name"] != None:
         user = users.find_user(request["user_name"])
         if user != None:
@@ -123,3 +138,46 @@ def view_auth(request, socket, quiet):
             return error("WSSB_AUTH_USER_NOT_FOUND", "The user name specified does not exist on the server.")
     else:
         return error("WSSB_AUTH_INVALID_SYNTAX", "Invalid packet syntax.")
+
+def view_reload(session_user, request, quiet):
+    """
+    Reloads the global server config and the user services module
+    """
+    if session_user.has_permission("wssb.reload"):
+        view_reloadcfg(session_user, request, quiet)
+        view_reloadusers(session_user, request, quiet)
+        logging.info("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
+        if not quiet:
+            print("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
+        return resp(success("WSSB_CONFIG_RELOADED", "The server has been reloaded successfully!"), Target.source())
+
+    return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server!"), Target.source())
+
+
+def view_reloadcfg(session_user, request, quiet):
+    """
+    Reloads the global server config
+    """
+    if session_user.has_permission("wssb.reloadcfg"):
+        config.global_config().reload()
+        logging.info("[SERVER] The global config has been reloaded by \'" + session_user.name + "\'")
+        if not quiet:
+            print("[SERVER] The global config has been reloaded by \'" + session_user.name + "\'")
+        return resp(success("WSSB_CONFIG_RELOADED", "Global config has been reloaded successfully!"), Target.source())
+    return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the global config!"), Target.source())
+
+def view_reloadusers(session_user, request, quiet):
+    """
+    Reloads the user services module (including groups)
+    """
+    if session_user.has_permission("wssb.reloadusers"):
+        users.reload_all()
+        sockets_to_close = []
+        for socket in users.connected_sockets:
+            if not users.socket_is_registered(socket):
+                sockets_to_close.append(socket)
+        logging.info("[SERVER] User services have been reloaded by \'" + session_user.name + "\'")
+        if not quiet:
+            print("[SERVER] User services have been reloaded by \'" + session_user.name + "\'")
+        return resp(success("WSSB_USERS_RELOADED", "User services have been reloaded successfully!"), Target.source(), to_close=sockets_to_close)
+    return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload user services!"), Target.source())

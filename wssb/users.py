@@ -8,6 +8,8 @@ from wssb import config
 registered_users = [] # Stores all users registered in users.ini
 registered_groups = [] # Stores all groups registered in groups.ini
 
+connected_sockets = set()
+
 class Group():
     """
     Defines a group object who has permissions and users
@@ -61,9 +63,12 @@ def reload_all():
     global registered_users, registered_groups
 
     if config.users_config().reload() and config.groups_config().reload():
+        registered_groups = []
+        new_registered_users = []
+
         for group in config.groups_config().sections():
             group_permissions = config.parse_safe_csv(config.groups_config()[group]["permissions"])
-            registered_groups.append(Group(group, group_permissions))
+            registered_groups.append(Group(group, [p for p in group_permissions if p != ""]))
         for user in config.users_config().sections():
             user_groups = config.parse_safe_csv(config.users_config()[user]["groups"])
             groups = []
@@ -73,9 +78,61 @@ def reload_all():
                         groups.append(group2)
             user_permissions = config.parse_safe_csv(config.users_config()[user]["permissions"])
             user_address = config.users_config()[user]["socket_address"]
-            registered_users.append(User(user, user_address, groups, user_permissions))
+            new_user = User(user, user_address, groups, [p for p in user_permissions if p != ""])
+            for existing in registered_users:
+                if existing.name == new_user.name:
+                    new_user._sockets = existing._sockets
+            new_registered_users.append(new_user)
+        registered_users = new_registered_users
     else:
         return False
+
+def is_registered(user):
+    """
+    Checks if the given user or username is registered
+    """
+    global registered_users
+
+    if type(user) == str:
+        for reg_user in registered_users:
+            if reg_user.name == user:
+                return True
+        return False
+    for reg_user in registered_users:
+        if reg_user.name == user.name:
+            return True
+    return False
+
+def socket_is_registered(socket):
+    """
+    Checks if a socket object is linked to valid registered user
+    """
+    global registered_users
+
+    for user in registered_users:
+        if socket in user._sockets:
+            return True
+    return False
+
+def register_socket(user_name, socket):
+    """
+    Registers a socket under the given username
+    """
+    global registered_users
+
+    for user in registered_users:
+        if user_name == user.name:
+            user._sockets.append(socket)
+
+def unregister_socket(user_name, socket):
+    """
+    Unregisters a socket under the given username
+    """
+    global registered_users
+
+    for user in registered_users:
+        if user_name == user.name:
+            user._sockets.remove(socket)
 
 def connected():
     """
@@ -96,7 +153,7 @@ def find_user(user_name):
     global registered_users
     for user in registered_users:
         if user.name == user_name:
-            return user
+            return (user)
     return None
 
 def find_group(group_name):
@@ -114,7 +171,12 @@ def perm_is_child(parent, child):
     """
     Returns true if the given child permission is a valid child of the given parents
     """
-    return child.startswith(parent)
+    parent_parts = parent.split(".")
+    child_parts = child.split(".")
+    for i in range(len(parent_parts)):
+        if parent_parts[i] != child_parts[i]:
+            return False
+    return True
 
 def add_group(group_name):
     """

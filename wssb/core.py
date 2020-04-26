@@ -60,30 +60,40 @@ async def run_server(socket, path):
                     if not authenticated and request["code"] != None and request["code"] != "auth":
                         await socket.send(views.format_packet(views.error("WSSB_USER_NOT_AUTHENTICATED", "You have not yet been authenticated!")))
                         break
-                    response = views.process(request, socket, quiet_mode)
+                    response = views.process(session_user, request, quiet_mode)
                     if response == None:
                         # Trigger plugin event handler for custom commands
                         responses = plugins.handle(request, session_user)
                         for response in responses:
                             target_conns = get_target_conns(response, socket)
-                            print(len(target_conns))
                             for conn in target_conns:
                                 await conn.send(views.format_packet(response["response"]))
                         if len(responses) == 0:
                             await socket.send(views.format_packet(views.error("WSSB_REQUEST_CODE_NOT_FOUND", "The request code given could not be found in any core or plugin features.")))
-                    elif type(response) == dict and response["wssb_authenticated"] != None:
+                    elif type(response) == dict and "wssb_authenticated" in response:
                         # Authenticate user
                         authenticated = True
                         session_user = response["user"]
-                        session_user._sockets.append(socket)
+                        users.register_socket(session_user.name, socket)
+                        users.connected_sockets.add(socket)
                         await socket.send(views.format_packet(views.success("WSSB_USER_AUTHENTICATED", "You are now logged in!")))
                         for plugin_response in response["plugin_responses"]:
                             target_conns = get_target_conns(plugin_response, socket)
-                            print(len(target_conns))
                             for conn in target_conns:
                                 await conn.send(views.format_packet(plugin_response["response"]))
                     else:
-                        await socket.send(views.format_packet(response["response"]))
+                        # Check for core flagged actions
+                        if "to_close" in response:
+                            for sock in response["to_close"]:
+                                await sock.send(views.format_packet(views.info("WSSB_USER_KICKED", response["close_reason"])))
+                                await sock.close()
+
+                        if "target" in response:
+                            target_conns = get_target_conns(response, socket)
+                            for conn in target_conns:
+                                await conn.send(views.format_packet(response["response"]))
+                        else:
+                            await socket.send(views.format_packet(response))
     except Exception as e:
         # Exceptions to ignore when printing can be added to the conn_excp blacklist
         conn_excp = (
@@ -93,8 +103,9 @@ async def run_server(socket, path):
             print(traceback.format_exc())
     finally:
         if session_user != None:
+            users.connected_sockets.remove(socket)
             plugins.trigger_handlers(Events.USER_DISCONNECT, { "user": session_user })
-            session_user._sockets.remove(socket)
+            users.unregister_socket(session_user.name, socket)
             logging.info("[SERVER] User '" + session_user.name + "' has disconnected.")
             if not quiet_mode:
                 print("[SERVER] User '" + session_user.name + "' has disconnected.")
