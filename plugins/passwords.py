@@ -89,7 +89,8 @@ class PasswordsPlugin(plugins.WSSBPlugin):
         # Allow valid sessions without authenticating password
         sessions_instance = plugins.find("sessions")
         if sessions_instance != None:
-            return "session_id" in request and sessions_instance.is_valid(request["session_id"])
+            if "session_id" in request:
+                return sessions_instance.is_valid(request["session_id"])
 
         needs_auth = False
         for group in user.groups:

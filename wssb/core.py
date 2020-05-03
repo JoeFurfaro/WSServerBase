@@ -57,7 +57,7 @@ async def run_server(socket, path):
             data = await socket.recv()
             packets = views.parse_packet(data)
             for request in packets:
-                if request["type"] != None and request["type"] == "request":
+                if "type" in request and request["type"] == "request" and "code" in request:
                     if not authenticated and request["code"] != None and request["code"] != "auth":
                         await socket.send(views.format_packet(views.error("WSSB_USER_NOT_AUTHENTICATED", "You have not yet been authenticated!")))
                         break

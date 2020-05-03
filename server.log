@@ -20,3 +20,124 @@
 2020-05-03 01:52:24,903 INFO: [SERVER] User 'joe' has been added to the list of connected users.
 2020-05-03 01:52:47,009 INFO: [SERVER] User 'joe' has disconnected.
 2020-05-03 01:52:47,042 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:37:48,905 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 15:37:48,908 INFO: [foo] Plugin started successfully!
+2020-05-03 15:37:48,909 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 15:42:02,051 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 15:42:02,053 INFO: [foo] Plugin started successfully!
+2020-05-03 15:42:02,054 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 15:43:45,220 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 15:43:45,222 INFO: [foo] Plugin started successfully!
+2020-05-03 15:43:45,223 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 15:43:58,578 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 15:43:58,581 INFO: [foo] Plugin started successfully!
+2020-05-03 15:43:58,582 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 15:44:00,062 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:50:07,068 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:50:20,291 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:50:30,823 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:50:30,902 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:56:14,672 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 15:56:14,674 INFO: [foo] Plugin started successfully!
+2020-05-03 15:56:14,675 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 15:56:16,294 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:56:33,126 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:56:33,162 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:56:38,993 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:56:39,023 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:56:58,048 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:56:58,117 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:57:32,634 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:57:32,781 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:57:57,310 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:57:57,454 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:57:58,085 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 15:57:58,141 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 15:59:07,039 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:03:44,884 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:03:51,099 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:03:51,153 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:04,538 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:04,645 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:07,725 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:07,771 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:09,585 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:09,633 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:10,565 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:10,620 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:50,919 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:51,072 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:51,678 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:51,724 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:52,810 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:52,861 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:53,457 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:53,518 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:10:56,874 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:10:56,943 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:11:12,456 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:11:12,504 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:11:33,201 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:11:33,342 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:11:41,376 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:11:41,526 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:12:23,098 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:14:29,217 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:14:29,219 INFO: [foo] Plugin started successfully!
+2020-05-03 16:14:29,220 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:16:56,009 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:16:56,012 INFO: [foo] Plugin started successfully!
+2020-05-03 16:16:56,012 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:19:29,832 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:19:29,834 INFO: [foo] Plugin started successfully!
+2020-05-03 16:19:29,834 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:22:53,264 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:22:58,143 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:23:24,478 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:23:24,481 INFO: [foo] Plugin started successfully!
+2020-05-03 16:23:24,481 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:24:50,995 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:24:59,387 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:12,283 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:27:12,285 INFO: [foo] Plugin started successfully!
+2020-05-03 16:27:12,286 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:27:26,196 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:33,387 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:33,468 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:37,100 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:37,156 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:38,579 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:38,650 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:39,355 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:39,417 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:39,938 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:40,021 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:40,414 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:40,554 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:40,901 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:41,050 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:27:42,594 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:27:42,651 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:28:36,374 INFO: [SERVER] Loaded server configuration file successfully
+2020-05-03 16:28:36,376 INFO: [foo] Plugin started successfully!
+2020-05-03 16:28:36,377 INFO: [SERVER] Starting WebSocket server on localhost:8765
+2020-05-03 16:29:08,686 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:15,606 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:15,655 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:15,866 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,008 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,051 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,108 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,192 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,245 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,354 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,407 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,495 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,546 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,699 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,762 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:16,816 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:16,867 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:17,058 INFO: [SERVER] User 'joe' has disconnected.
+2020-05-03 16:29:17,211 INFO: [SERVER] User 'joe' has been added to the list of connected users.
+2020-05-03 16:29:28,218 INFO: [SERVER] User 'joe' has disconnected.

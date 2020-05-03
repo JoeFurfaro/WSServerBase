@@ -127,7 +127,7 @@ def view_auth(session_user, request, socket, quiet):
     """
     if session_user != None:
         return error("WSSB_ALREADY_AUTHENTICATED", "You have already been authenticated.")
-    if request["user_name"] != None:
+    if "user_name" in request:
         user = users.find_user(request["user_name"])
         if user != None:
             if plugins.trigger_conditional_handlers(Events.USER_AUTH_ATTEMPT, { "request": request, "user": user, "socket": socket }):
