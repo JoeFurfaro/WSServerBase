@@ -19,12 +19,12 @@ class WSSBPlugin():
     """
     Defines an abstract plugin that can be extended to create custom WSSBPlugins
     """
-    def __init__(self, name, version_str, quiet):
+    def __init__(self, name, version_str, author, dependencies, quiet):
         """
         Constructor for WSSBPlugin
         Autogenerates plugin data folder
         """
-        self.name, self.version_str, self.quiet = name.lower(), version_str, quiet
+        self.name, self.version_str, self.author, self.dependencies, self.quiet = name.lower(), version_str, author, dependencies, quiet
         self.handlers = []
         self.routes = {}
 
@@ -33,6 +33,13 @@ class WSSBPlugin():
             os.mkdir(env_root + "/plugins/" + name.lower())
 
         self.path = env_root + "/plugins/" + name.lower() + "/"
+
+    def process_command(self, args):
+        """
+        Processes command line inputs
+        Should be developer defined
+        """
+        pass
 
     def __str__(self):
         """
@@ -82,11 +89,11 @@ class WSSBPlugin():
         logging.warning("[" + self.name + "] " + s)
         self.qprint("[" + self.name + "] " + s)
 
-    def warning(self, s):
+    def error(self, s):
         """
         Logs an error plugin message
         """
-        logging.warning("[" + self.name + "] " + s)
+        logging.error("[" + self.name + "] " + s)
         self.qprint("[" + self.name + "] " + s)
 
     def register_handler(self, handler):
@@ -156,7 +163,7 @@ def get():
     global plugins
     return plugins
 
-def reload_all():
+def reload_all(quiet):
     """
     Reloads all server plugins
     """
@@ -164,9 +171,12 @@ def reload_all():
 
     plugins = []
     autogen_folder(True)
-    load_all(True)
 
-    trigger_conditional_handlers(Events.SERVER_START, None)
+    if load_all(quiet):
+        trigger_conditional_handlers(Events.SERVER_START, None)
+        return True
+    return False
+
 
 def load_all(quiet):
     """
@@ -183,7 +193,29 @@ def load_all(quiet):
             plugin_class = None
             for name, cls in inspect.getmembers(module):
                 if inspect.isclass(cls) and issubclass(cls, WSSBPlugin):
-                    plugins.append(cls(quiet))
+                    pl = cls(quiet)
+                    if find(pl.name) == None: # <- Makes sure plugin with same name does not exist
+                         plugins.append(pl)
+    for plugin in plugins:
+        for dep in plugin.dependencies:
+            pl = find(dep)
+            if pl == None:
+                logging.error("[SERVER] FATAL: Plugin \'" + plugin.name + "\' is missing its dependency \'" + dep + "\'")
+                if not quiet:
+                    print("[SERVER] FATAL: Plugin \'" + plugin.name + "\' is missing its dependency \'" + dep + "\'")
+                return False
+    return True
+
+def find(name):
+    """
+    Finds a plugin object by name
+    Returns None if plugin cannot be found
+    """
+    global plugins
+    for plugin in plugins:
+        if plugin.name == name:
+            return plugin
+    return None
 
 def autogen_folder(quiet):
     """

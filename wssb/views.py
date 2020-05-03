@@ -101,13 +101,13 @@ def info(info_code, message):
     """
     return { "type": "response", "status": "info", "code": info_code, "message": message }
 
-def process(session_user, request, quiet):
+def process(session_user, request, socket, quiet):
     """
     Process a core request from client
     Return None if no request matches are found
     """
     if request["code"] == "auth":
-        return view_auth(session_user, request, quiet)
+        return view_auth(session_user, request, socket, quiet)
     elif request["code"] == "reloadcfg":
         return view_reloadcfg(session_user, request, quiet)
     elif request["code"] == "reloadusers":
@@ -121,7 +121,7 @@ def process(session_user, request, quiet):
 
     return None
 
-def view_auth(session_user, request, quiet):
+def view_auth(session_user, request, socket, quiet):
     """
     Identifies and authenticates a user
     """
@@ -130,14 +130,14 @@ def view_auth(session_user, request, quiet):
     if request["user_name"] != None:
         user = users.find_user(request["user_name"])
         if user != None:
-            if plugins.trigger_conditional_handlers(Events.USER_AUTH_ATTEMPT, { "request": request, "user": user }):
-                plugin_responses = plugins.trigger_handlers(Events.USER_AUTHENTICATED, { "user": user })
+            if plugins.trigger_conditional_handlers(Events.USER_AUTH_ATTEMPT, { "request": request, "user": user, "socket": socket }):
+                plugin_responses = plugins.trigger_handlers(Events.USER_AUTHENTICATED, { "user": user, "socket": socket })
                 logging.info("[SERVER] User '" + request["user_name"] + "' has been added to the list of connected users.")
                 if not quiet:
                     print("[SERVER] User '" + request["user_name"] + "' has been added to the list of connected users.")
                 return { "wssb_authenticated": True, "user": user, "plugin_responses": plugin_responses }
             else:
-                return None
+                return error("WSSB_AUTH_FAILED", "User authentication failed!")
         else:
             return error("WSSB_AUTH_USER_NOT_FOUND", "The user name specified does not exist on the server.")
     else:
@@ -162,7 +162,7 @@ def view_reload(session_user, request, quiet):
         logging.info("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
         if not quiet:
             print("[SERVER] The server has been reloaded by \'" + session_user.name + "\'")
-        return resp(success("WSSB_RELOADED", "The server has been reloaded successfully!"), Target.source(), to_close=users_resp["to_close"])
+        return resp(success("WSSB_RELOADED", "The server has been reloaded successfully!"), Target.source(), to_close=users_resp["to_close"], stop=plugins_resp["stop"])
 
     return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server!"), Target.source())
 
@@ -172,11 +172,14 @@ def view_reloadplugins(session_user, request, quiet):
     Reloads all plugins
     """
     if session_user.has_permission("wssb.reload.plugins"):
-        plugins.reload_all()
-        logging.info("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
-        if not quiet:
-            print("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
-        return resp(success("WSSB_PLUGINS_RELOADED", "Server plugins have been reloaded successfully!"), Target.source())
+        plugins.trigger_handlers(Events.SERVER_STOP, None)
+        if plugins.reload_all(quiet):
+            logging.info("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
+            if not quiet:
+                print("[SERVER] The server plugins have been reloaded by \'" + session_user.name + "\'")
+            return resp(success("WSSB_PLUGINS_RELOADED", "Server plugins have been reloaded successfully!"), Target.source())
+        else:
+            return resp(error("WSSB_PLUGIN_RELOAD_FAILURE", "Could not reload server plugins"), None, stop=True)
     return resp(error("WSSB_ACCESS_DENIED", "You do not have permission to reload the server plugins!"), Target.source())
 
 

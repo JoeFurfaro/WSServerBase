@@ -145,6 +145,18 @@ def connected():
             conn.append(user)
     return conn
 
+def exists(user_name):
+    """
+    Returns true if the user exists
+    """
+    return find_user(user_name) != None
+
+def group_exists(group_name):
+    """
+    Returns true if the group exists
+    """
+    return find_group(group_name) != None
+
 def find_user(user_name):
     """
     Finds a registered user by name

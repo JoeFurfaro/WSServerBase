@@ -61,7 +61,7 @@ async def run_server(socket, path):
                     if not authenticated and request["code"] != None and request["code"] != "auth":
                         await socket.send(views.format_packet(views.error("WSSB_USER_NOT_AUTHENTICATED", "You have not yet been authenticated!")))
                         break
-                    response = views.process(session_user, request, quiet_mode)
+                    response = views.process(session_user, request, socket, quiet_mode)
                     if response == None:
                         # Trigger plugin event handler for custom commands
                         responses = plugins.handle(request, session_user)
@@ -89,19 +89,20 @@ async def run_server(socket, path):
                                 await sock.send(views.format_packet(views.info("WSSB_USER_KICKED", response["close_reason"])))
                                 await sock.close()
 
-                        if "stop" in response:
-                            if response["stop"]:
-                                logging.info("[SERVER] " + session_user.name + " is closing the server")
-                                if not quiet_mode:
-                                    print("[SERVER] " + session_user.name + " is closing the server")
-                                stop.set_result(0)
-
                         if "target" in response:
                             target_conns = get_target_conns(response, socket)
                             for conn in target_conns:
                                 await conn.send(views.format_packet(response["response"]))
                         else:
                             await socket.send(views.format_packet(response))
+
+                        if "stop" in response:
+                            if response["stop"]:
+                                logging.info("[SERVER] " + session_user.name + " is closing the server")
+                                if not quiet_mode:
+                                    print("[SERVER] " + session_user.name + " is closing the server")
+                                plugins.trigger_handlers(Events.SERVER_STOP, None)
+                                stop.set_result(0)
     except Exception as e:
         # Exceptions to ignore when printing can be added to the conn_excp blacklist
         conn_excp = (
@@ -112,7 +113,7 @@ async def run_server(socket, path):
     finally:
         if session_user != None:
             users.connected_sockets.remove(socket)
-            plugins.trigger_handlers(Events.USER_DISCONNECT, { "user": session_user })
+            plugins.trigger_handlers(Events.USER_DISCONNECT, { "user": session_user, "socket": socket })
             users.unregister_socket(session_user.name, socket)
             logging.info("[SERVER] User '" + session_user.name + "' has disconnected.")
             if not quiet_mode:
@@ -143,7 +144,8 @@ def start(quiet):
         logging.error("[SERVER] Could not load server configuration file")
 
     # Load all plugins
-    plugins.load_all(quiet)
+    if not plugins.load_all(quiet):
+        return
 
     # Load all users
     config.load_users_config()

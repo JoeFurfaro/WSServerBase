@@ -11,6 +11,7 @@ from wssb import config
 from wssb import files
 from wssb import core
 from wssb import users
+from wssb import plugins
 
 logging.basicConfig(filename="server.log", level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
@@ -22,6 +23,7 @@ action_choices = [
     "resetcfg",
     "groups",
     "users",
+    "plugins",
 ]
 
 parser.add_argument("action", help="The WebSocketServer manager action to run", choices=action_choices)
@@ -30,9 +32,10 @@ parser.add_argument("-q", "--quiet", help="Silences program output", action="sto
 parser.add_argument("-a", "--add", help="Object adding mode", action="store_true")
 parser.add_argument("-r", "--remove", help="Object removing mode", action="store_true")
 parser.add_argument("-l", "--list", help="List object mode", action="store_true")
+parser.add_argument("-e", "--edit", help="Object editing mode", nargs="*")
 parser.add_argument("-g", "--group", help="Identifies the name of a group", nargs=1)
 parser.add_argument("-u", "--user", help="Identifies the name of a user", nargs=1)
-parser.add_argument("-p", "--perms", help="Identifies a permissions string", nargs=1)
+parser.add_argument("-p", "--permplug", help="Identifies a permissions string or a plugin name", nargs=1)
 
 args = parser.parse_args()
 
@@ -50,6 +53,30 @@ elif args.action == "resetcfg":
     else:
         if not args.quiet:
             print("[SERVER] Failed to reset server configuration file")
+
+elif args.action == "plugins":
+    if not plugins.load_all(args.quiet):
+        sys.exit(0)
+    config.load_groups_config()
+    config.load_users_config()
+    users.reload_all()
+    if args.list:
+        if not args.quiet:
+            for plugin in plugins.plugins:
+                print(plugin.name, end=" ")
+            print()
+    elif args.permplug != None:
+        active_plugin = plugins.find(args.permplug[0])
+        if args.edit == None:
+            if not args.quiet:
+                print(active_plugin.name)
+                print("Version " + active_plugin.version_str)
+                print("By " + active_plugin.author)
+        else:
+            active_plugin.process_command(args.edit)
+    else:
+        if not args.quiet:
+            print("[SERVER] Plugin name not specified")
 
 elif args.action == "groups":
 
@@ -86,8 +113,8 @@ elif args.action == "groups":
             elif result == -3:
                 if not args.quiet:
                     print("[SERVER] User '" + args.user[0] + "' is already in group '" + group_name + "'")
-        elif args.perms != None:
-            perms = args.perms[0]
+        elif args.permplug != None:
+            perms = args.permplug[0]
             if not config.validate_permission_string(perms):
                 if not args.quiet:
                     print("[SERVER] Permissions string contains illegal characters")
@@ -129,8 +156,8 @@ elif args.action == "groups":
             elif result == -3:
                 if not args.quiet:
                     print("[SERVER] User '" + args.user[0] + "' not in group '" + group_name + "'")
-        elif args.perms != None:
-            perms = args.perms[0]
+        elif args.permplug != None:
+            perms = args.permplug[0]
             if not config.validate_permission_string(perms):
                 if not args.quiet:
                     print("[SERVER] Permissions string contains illegal characters")
@@ -184,8 +211,8 @@ elif args.action == "users":
                 print("[SERVER] User name contains illegal characters")
             sys.exit()
 
-        if args.perms != None:
-            perms = args.perms[0]
+        if args.permplug != None:
+            perms = args.permplug[0]
             if not config.validate_permission_string(perms):
                 if not args.quiet:
                     print("[SERVER] Permissions string contains illegal characters")
@@ -213,8 +240,8 @@ elif args.action == "users":
 
         user_name = args.user[0]
 
-        if args.perms != None:
-            perms = args.perms[0]
+        if args.permplug != None:
+            perms = args.permplug[0]
             if not config.validate_permission_string(perms):
                 if not args.quiet:
                     print("[SERVER] Permissions string contains illegal characters")

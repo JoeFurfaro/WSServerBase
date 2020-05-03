@@ -17,6 +17,7 @@ class Config():
         Constructor for Config
         """
         self.path, self.required = path, required
+        self.config = None
 
     def load(self):
         """
@@ -58,6 +59,8 @@ class Config():
         """
         Sets the value of a config option
         """
+        if not self.has_section(section):
+            self.config[section] = {}
         self.config[section][option] = value
 
     def has_section(self, section):

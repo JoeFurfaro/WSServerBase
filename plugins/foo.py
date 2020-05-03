@@ -18,9 +18,11 @@ class FooPlugin(plugins.WSSBPlugin):
         """
         PLUGIN_NAME = "foo"
         PLUGIN_VERSION = "1.0.0"
+        PLUGIN_AUTHOR = "Joe Furfaro"
+        DEPENDENCIES = []
 
         # Initialize the plugin superclass
-        super().__init__(PLUGIN_NAME, PLUGIN_VERSION, quiet)
+        super().__init__(PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR, DEPENDENCIES, quiet)
 
         # Setup plugin event handlers
         self.setup_handlers()
@@ -67,6 +69,12 @@ class FooPlugin(plugins.WSSBPlugin):
         user = context["user"]
         response = views.info("FOO_WELCOME", "Hello " + user.name + "! FOO welcomes YOU!")
         return self.resp(response, Target.source())
+
+    def process_command(self, args):
+        """
+        Example for processing commands from manage.py
+        """
+        self.info("Processing command")
 
     def view_foo(self, context):
         """
